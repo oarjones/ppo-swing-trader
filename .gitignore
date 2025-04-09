@@ -1,0 +1,64 @@
+# Ignorar entornos virtuales
+venv/
+ENV/
+env/
+.venv/
+
+# Archivos compilados de Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Archivos de distribución y empaquetado
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Registros e informes
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Resultados de pruebas y cobertura
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.pytest_cache/
+.hypothesis/
+
+# Notebooks de Jupyter
+.ipynb_checkpoints/
+
+# Caché de herramientas de análisis estático
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# Archivos de configuración de editores y entornos IDE
+.idea/
+.vscode/
+
+# Otros archivos temporales o de respaldo
+*.swp
+*.swo
