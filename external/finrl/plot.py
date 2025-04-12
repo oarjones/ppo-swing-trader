@@ -20,7 +20,7 @@ from external.finrl.meta.data_processors.func import str2date
 def get_daily_return(df, value_col_name="account_value"):
     df = deepcopy(df)
     df["daily_return"] = df[value_col_name].pct_change(1)
-    df["date"] = pd.to_datetime(df["date"])
+    df["date"] = pd.to_datetime(df["date"], utc=True)
     df.set_index("date", inplace=True, drop=True)
     df.index = df.index.tz_localize("UTC")
     return pd.Series(df["daily_return"], index=df.index)
@@ -28,7 +28,7 @@ def get_daily_return(df, value_col_name="account_value"):
 
 def convert_daily_return_to_pyfolio_ts(df):
     strategy_ret = df.copy()
-    strategy_ret["date"] = pd.to_datetime(strategy_ret["date"])
+    strategy_ret["date"] = pd.to_datetime(strategy_ret["date"], utc=True)
     strategy_ret.set_index("date", drop=False, inplace=True)
     strategy_ret.index = strategy_ret.index.tz_localize("UTC")
     del strategy_ret["date"]
@@ -48,25 +48,25 @@ def backtest_stats(account_value, value_col_name="account_value"):
     return None
 
 
-def backtest_plot(
-    account_value,
-    baseline_start=config.TRADE_START_DATE,
-    baseline_end=config.TRADE_END_DATE,
-    baseline_ticker="^DJI",
-    value_col_name="account_value",
-):
-    df = deepcopy(account_value)
-    df["date"] = pd.to_datetime(df["date"])
-    test_returns = get_daily_return(df, value_col_name=value_col_name)
+# def backtest_plot(
+#     account_value,
+#     baseline_start=config.TRADE_START_DATE,
+#     baseline_end=config.TRADE_END_DATE,
+#     baseline_ticker="^DJI",
+#     value_col_name="account_value",
+# ):
+#     df = deepcopy(account_value)
+#     df["date"] = pd.to_datetime(df["date"], utc=True)
+#     test_returns = get_daily_return(df, value_col_name=value_col_name)
 
-    baseline_df = get_baseline(
-        ticker=baseline_ticker, start=baseline_start, end=baseline_end
-    )
+#     baseline_df = get_baseline(
+#         ticker=baseline_ticker, start=baseline_start, end=baseline_end
+#     )
 
-    baseline_df["date"] = pd.to_datetime(baseline_df["date"], format="%Y-%m-%d")
-    baseline_df = pd.merge(df[["date"]], baseline_df, how="left", on="date")
-    baseline_df = baseline_df.fillna(method="ffill").fillna(method="bfill")
-    baseline_returns = get_daily_return(baseline_df, value_col_name="close")
+#     baseline_df["date"] = pd.to_datetime(baseline_df["date"], format="%Y-%m-%d", utc=True
+#     baseline_df = pd.merge(df[["date"]], baseline_df, how="left", on="date")
+#     baseline_df = baseline_df.fillna(method="ffill").fillna(method="bfill")
+#     baseline_returns = get_daily_return(baseline_df, value_col_name="close")
 
     # with pyfolio.plotting.plotting_context(font_scale=1.1):
     #     pyfolio.create_full_tear_sheet(

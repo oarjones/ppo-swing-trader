@@ -15,7 +15,7 @@ from typing import Dict, List, Tuple, Any, Optional, Union
 try:
     
     
-    from external.elegantrl.agents.AgentPPO import ActorPPO, CriticPPO
+    from external.elegantrl.agents.AgentPPO import ActorPPO, CriticPPO, AgentPPO
     ELEGANTRL_AVAILABLE = True
 except ImportError:
     # Define basic placeholder classes if ElegantRL is not available
@@ -28,9 +28,9 @@ except ImportError:
             super().__init__()
     
                 
-    class AgentPPO:
-        def __init__(self, *args, **kwargs):
-            pass
+    # class AgentPPO:
+    #     def __init__(self, *args, **kwargs):
+    #         pass
     
     ELEGANTRL_AVAILABLE = False
 

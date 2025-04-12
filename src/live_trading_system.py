@@ -18,8 +18,8 @@ import argparse
 from typing import List, Dict, Tuple, Any, Optional, Union
 
 # Import our components
-from ibkr_interface import IBKRInterface
-from ibkr_processor import IBKRProcessor
+from src.ibkr_interface import IBKRInterface
+from src.ibkr_processor import IBKRProcessor
 from finrl_multi_timeframe_env import FinRLMultiTimeframeEnv
 
 # Import ElegantRL components if available

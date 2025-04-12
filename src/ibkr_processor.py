@@ -15,7 +15,7 @@ from typing import List, Dict, Union, Optional, Tuple
 
 # Import the IBKRInterface
 from external.finrl.meta.data_processors.data_processor import DataProcessor
-from ibkr_interface import IBKRInterface
+from src.ibkr_interface import IBKRInterface
 
 
 
@@ -91,8 +91,8 @@ class IBKRProcessor(DataProcessor):
             raise ValueError(f"Unsupported timeframe: {timeframe}. Supported: {list(self.timeframe_map.keys())}")
         
         # Calculate duration based on start and end dates
-        start_dt = pd.to_datetime(start_date)
-        end_dt = pd.to_datetime(end_date)
+        start_dt = pd.to_datetime(start_date, utc=True)
+        end_dt = pd.to_datetime(end_date, utc=True)
         delta = end_dt - start_dt
         
         # Convert to IBKR duration format based on the delta
@@ -212,7 +212,7 @@ class IBKRProcessor(DataProcessor):
                 
                 # Process dataframe to match FinRL format
                 if 'time' in df.columns:
-                    df['date'] = pd.to_datetime(df['time'])
+                    df['date'] = pd.to_datetime(df['time'], utc=True)
                     df.set_index('date', inplace=True)
                 
                 # Rename columns to match FinRL format
@@ -246,15 +246,15 @@ class IBKRProcessor(DataProcessor):
         # Convert to datetime if needed
         if not isinstance(df.index, pd.DatetimeIndex):
             if 'datetime' in df.columns:
-                df['date'] = pd.to_datetime(df['datetime'])
+                df['date'] = pd.to_datetime(df['datetime'], utc=True)
                 df.set_index('date', inplace=True)
             elif 'date' in df.columns:
-                df['date'] = pd.to_datetime(df['date'])
+                df['date'] = pd.to_datetime(df['date'], utc=True)
                 df.set_index('date', inplace=True)
         
         # Ensure start and end dates are datetime
-        start_dt = pd.to_datetime(start_date)
-        end_dt = pd.to_datetime(end_date)
+        start_dt = pd.to_datetime(start_date, utc=True)
+        end_dt = pd.to_datetime(end_date, utc=True)
         
         # Filter the DataFrame
         return df[(df.index >= start_dt) & (df.index <= end_dt)]
@@ -276,10 +276,10 @@ class IBKRProcessor(DataProcessor):
         # Ensure we have a datetime index
         if not isinstance(result.index, pd.DatetimeIndex):
             if 'datetime' in result.columns:
-                result['date'] = pd.to_datetime(result['datetime'])
+                result['date'] = pd.to_datetime(result['datetime'], utc=True)
                 result.set_index('date', inplace=True)
             elif 'date' in result.columns:
-                result['date'] = pd.to_datetime(result['date'])
+                result['date'] = pd.to_datetime(result['date'], utc=True)
                 result.set_index('date', inplace=True)
         
         # Ensure we have the necessary columns

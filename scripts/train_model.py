@@ -114,9 +114,9 @@ def load_data(data_dir, ticker_list, start_date, end_date, include_indicators=Tr
             
             # Filter by date range
             if start_date:
-                df_1h = df_1h[df_1h.index >= pd.to_datetime(start_date)]
+                df_1h = df_1h[df_1h.index >= pd.to_datetime(start_date, utc=True)]
             if end_date:
-                df_1h = df_1h[df_1h.index <= pd.to_datetime(end_date)]
+                df_1h = df_1h[df_1h.index <= pd.to_datetime(end_date, utc=True)]
             
             # Add technical indicators if needed
             if include_indicators and FINRL_AVAILABLE:
@@ -139,9 +139,9 @@ def load_data(data_dir, ticker_list, start_date, end_date, include_indicators=Tr
             
             # Filter by date range
             if start_date:
-                df_4h = df_4h[df_4h.index >= pd.to_datetime(start_date)]
+                df_4h = df_4h[df_4h.index >= pd.to_datetime(start_date, utc=True)]
             if end_date:
-                df_4h = df_4h[df_4h.index <= pd.to_datetime(end_date)]
+                df_4h = df_4h[df_4h.index <= pd.to_datetime(end_date, utc=True)]
             
             # Add technical indicators if needed
             if include_indicators and FINRL_AVAILABLE:
@@ -447,72 +447,44 @@ def main():
     parser = argparse.ArgumentParser(description='Train Multi-Timeframe PPO Agent')
     
     # Data parameters
-    parser.add_argument('--data_source', type=str, choices=['csv', 'ibkr'], default='csv',
-                        help='Source of data (csv or ibkr)')
-    parser.add_argument('--data_dir', type=str, default='data/raw',
-                        help='Directory containing CSV files (for csv source)')
-    parser.add_argument('--ticker_list', type=str, nargs='+', required=True,
-                        help='List of tickers to train on')
-    parser.add_argument('--start_date', type=str, default='2020-01-01',
-                        help='Start date for training data')
-    parser.add_argument('--end_date', type=str, default='2023-01-01',
-                        help='End date for training data')
+    parser.add_argument('--data_source', type=str, choices=['csv', 'ibkr'], default='ibkr', help='Source of data (csv or ibkr)')
+    parser.add_argument('--data_dir', type=str, default='data/raw', help='Directory containing CSV files (for csv source)')
+    parser.add_argument('--ticker_list', type=str, nargs='+', default=['BAC', 'INTC', 'PFE'], required=False, help='List of tickers to train on')
+    parser.add_argument('--start_date', type=str, default='2021-01-01', help='Start date for training data')
+    parser.add_argument('--end_date', type=str, default='2025-01-01',help='End date for training data')
     
     # IBKR parameters (if using IBKR data source)
-    parser.add_argument('--ibkr_host', type=str, default='127.0.0.1',
-                        help='IBKR host address')
-    parser.add_argument('--ibkr_port', type=int, default=4002,
-                        help='IBKR port (4001 for Gateway, 4002 for paper)')
-    parser.add_argument('--ibkr_client_id', type=int, default=1,
-                        help='IBKR client ID')
-    parser.add_argument('--ibkr_paper', action='store_true',
-                        help='Use paper trading account for data')
+    parser.add_argument('--ibkr_host', type=str, default='127.0.0.1', help='IBKR host address')
+    parser.add_argument('--ibkr_port', type=int, default=4002, help='IBKR port (4001 for Gateway, 4002 for paper)')
+    parser.add_argument('--ibkr_client_id', type=int, default=1, help='IBKR client ID')
+    parser.add_argument('--ibkr_paper', action='store_true', default=True, help='Use paper trading account for data')
     
     # Environment parameters
-    parser.add_argument('--lookback_window_1h', type=int, default=20,
-                        help='Lookback window for 1h data')
-    parser.add_argument('--lookback_window_4h', type=int, default=10,
-                        help='Lookback window for 4h data')
-    parser.add_argument('--initial_amount', type=float, default=10000.0,
-                        help='Initial amount for simulation')
-    parser.add_argument('--commission', type=float, default=0.001,
-                        help='Commission rate')
-    parser.add_argument('--max_position', type=float, default=1.0,
-                        help='Maximum position size')
-    parser.add_argument('--max_trades_per_day', type=int, default=3,
-                        help='Maximum trades per day (PDT rule)')
+    parser.add_argument('--lookback_window_1h', type=int, default=20, help='Lookback window for 1h data')
+    parser.add_argument('--lookback_window_4h', type=int, default=10, help='Lookback window for 4h data')
+    parser.add_argument('--initial_amount', type=float, default=10000.0, help='Initial amount for simulation')
+    parser.add_argument('--commission', type=float, default=0.001, help='Commission rate')
+    parser.add_argument('--max_position', type=float, default=1.0, help='Maximum position size')
+    parser.add_argument('--max_trades_per_day', type=int, default=3, help='Maximum trades per day (PDT rule)')
     
     # Agent parameters
-    parser.add_argument('--hidden_dim', type=int, default=128,
-                        help='Hidden dimension for neural networks')
-    parser.add_argument('--no_attention', action='store_true',
-                        help='Disable attention mechanism')
-    parser.add_argument('--no_regime', action='store_true',
-                        help='Disable regime detection')
-    parser.add_argument('--learning_rate', type=float, default=3e-4,
-                        help='Learning rate')
+    parser.add_argument('--hidden_dim', type=int, default=128, help='Hidden dimension for neural networks')
+    parser.add_argument('--no_attention', action='store_true', help='Disable attention mechanism')
+    parser.add_argument('--no_regime', action='store_true', help='Disable regime detection')
+    parser.add_argument('--learning_rate', type=float, default=3e-4, help='Learning rate')
     
     # Training parameters
-    parser.add_argument('--epochs', type=int, default=100,
-                        help='Number of training epochs')
-    parser.add_argument('--update_freq', type=int, default=2048,
-                        help='Frequency of updates (steps)')
-    parser.add_argument('--batch_size', type=int, default=64,
-                        help='Batch size for updates')
-    parser.add_argument('--ppo_epochs', type=int, default=10,
-                        help='PPO epochs per update')
-    parser.add_argument('--use_elegantrl', action='store_true',
-                        help='Use ElegantRL training framework')
-    parser.add_argument('--use_mp', action='store_true',
-                        help='Use multiprocessing for training')
-    parser.add_argument('--device', type=str, default='cuda' if torch.cuda.is_available() else 'cpu',
-                        help='Device to use for training (cuda or cpu)')
+    parser.add_argument('--epochs', type=int, default=100, help='Number of training epochs')
+    parser.add_argument('--update_freq', type=int, default=2048, help='Frequency of updates (steps)')
+    parser.add_argument('--batch_size', type=int, default=64, help='Batch size for updates')
+    parser.add_argument('--ppo_epochs', type=int, default=10, help='PPO epochs per update')
+    parser.add_argument('--use_elegantrl', action='store_true', default=True, help='Use ElegantRL training framework')
+    parser.add_argument('--use_mp', action='store_true', help='Use multiprocessing for training')
+    parser.add_argument('--device', type=str, default='cuda' if torch.cuda.is_available() else 'cpu', help='Device to use for training (cuda or cpu)')
     
     # Output parameters
-    parser.add_argument('--model_dir', type=str, default='models',
-                        help='Directory to save model')
-    parser.add_argument('--model_name', type=str, default='ppo_multi_timeframe',
-                        help='Name of the model')
+    parser.add_argument('--model_dir', type=str, default='models', help='Directory to save model')
+    parser.add_argument('--model_name', type=str, default='ppo_multi_timeframe', help='Name of the model')
     
     # Parse arguments
     args = parser.parse_args()

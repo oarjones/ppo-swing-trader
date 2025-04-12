@@ -491,7 +491,7 @@ class AgentPPO_isaacgym(AgentBase):
         action_std_log = getattr(self.act, 'action_std_log', torch.zeros(1)).mean()
         return np.array(obj_critic_list).mean(), np.array(obj_actor_list).mean(), action_std_log.item()  # logging_tuple
 
-    def get_reward_sum_gae(self, buffer) -> (Tensor, Tensor, Tensor, Tensor, Tensor):
+    def get_reward_sum_gae(self, buffer) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]:
         """
         Calculate the **reward-to-go** and **advantage estimation** using GAE.
         """

@@ -126,10 +126,10 @@ def calc_train_trade_data(
     train_ends: list[str],
     trade_starts: list[str],
     trade_ends: list[str],
-    init_train_data: pd.DataFrame(),
-    init_trade_data: pd.DataFrame(),
+    init_train_data: pd.DataFrame,
+    init_trade_data: pd.DataFrame,
     date_col: str,
-) -> tuple[pd.DataFrame(), pd.DataFrame()]:
+) -> tuple[pd.DataFrame, pd.DataFrame]:
     train_start = train_starts[i]
     train_end = train_ends[i]
     trade_start = trade_starts[i]

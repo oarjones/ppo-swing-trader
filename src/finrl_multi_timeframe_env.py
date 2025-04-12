@@ -17,7 +17,7 @@ import logging
 from typing import List, Dict, Tuple, Any, Optional, Union
 
 # Import IBKR Interface
-from ibkr_interface import IBKRInterface
+from src.ibkr_interface import IBKRInterface
 
 # Import FinRL components
 
@@ -26,7 +26,7 @@ from external.finrl.meta.preprocessor.preprocessors import data_split
 parent_class = StockTradingEnv
 
 # Import processor
-from ibkr_processor import IBKRProcessor
+from src.ibkr_processor import IBKRProcessor
 
 logger = logging.getLogger(__name__)
 
